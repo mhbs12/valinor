@@ -1,0 +1,5 @@
+<div class="quadro-kanban" cdkDropListGroup>
+    @for (coluna of colunas; track coluna){
+        <app-column [tituloDaColuna]="coluna.titulo" [listaDeTarefas]="coluna.tarefas"></app-column>
+    }
+</div>

@@ -1,0 +1,14 @@
+.quadro-kanban {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  align-items: flex-start;
+  
+  /* ESTA É A LINHA QUE CENTRALIZA: */
+  justify-content: center; 
+  
+  /* Opcional: Garante que o quadro ocupe a largura toda para poder centralizar o conteúdo */
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box; /* Evita que o padding "estoure" a largura da tela */
+}

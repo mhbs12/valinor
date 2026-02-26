@@ -1,0 +1,17 @@
+.lista-cards {
+  min-height: 400px; /* Garante que mesmo vazia, a coluna aceite cards */
+  min-width: 300px;
+  background-color: #ebecf0; /* Cor de fundo clássica do Trello */
+  
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* Espaço entre um card e outro */
+}
+
+h2 {
+  font-family: sans-serif;
+  font-size: 1.1rem;
+  color: #172b4d;
+  margin-bottom: 12px;
+}

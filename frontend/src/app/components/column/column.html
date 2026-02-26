@@ -1,0 +1,16 @@
+<div> 
+  <h2>{{ tituloDaColuna() }}</h2>
+  
+  <div 
+    cdkDropList 
+    class="lista-cards"
+    [cdkDropListData]="listaDeTarefas()" 
+    (cdkDropListDropped)="tarefaMovida($event)">
+    
+    @for (tarefa of listaDeTarefas(); track tarefa) {
+      <div cdkDrag>
+        <app-card [texto]="tarefa"></app-card>
+      </div>
+    }
+  </div>
+</div>
