@@ -1,15 +1,10 @@
 <div>
   <h3>{{ tituloDaColuna() }}</h3>
 
-  <div
-    cdkDropList
-    class="lista-cards"
-    [id]="tituloDaColuna()"
-    [cdkDropListData]="listaDeTarefas()"
-    (cdkDropListDropped)="aoSoltar($event)"
-  >
+  <div cdkDropList class="lista-cards" [id]="tituloDaColuna()" [cdkDropListData]="listaDeTarefas()"
+    (cdkDropListDropped)="aoSoltar($event)">
     @for (tarefa of listaDeTarefas(); track tarefa) {
-      <app-card [texto]="tarefa.texto" cdkDrag></app-card>
+    <app-card [texto]="tarefa.texto" cdkDrag></app-card>
     }
   </div>
 </div>

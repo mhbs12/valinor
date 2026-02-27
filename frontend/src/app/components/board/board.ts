@@ -55,7 +55,8 @@ export class Board {
       //Salva as posiçoes corretamente no backend
       const tarefaMovida = event.container.data[event.currentIndex];
       const novaColuna = event.container.id;
-      this.taskService.updateTaskPosition(tarefaMovida.id, novaColuna, event.currentIndex).subscribe();
+      const novaOrdem = event.currentIndex;
+      this.taskService.updateTaskPosition(tarefaMovida.id, novaColuna, novaOrdem).subscribe();
     }
 
     //Atualizando o signal
