@@ -1,6 +1,10 @@
 .lista-cards {
-    min-height: 400px;
-  min-width: 300px;
+  max-height: 700px;
+  min-height: 400px;
+  width: 400px;
+  border-radius: 8px;
+  border: 1px solid #dfe1e6;
+  overflow-y: auto;
   background-color: #ebecf0;
   padding: 10px;
   display: flex;
@@ -8,9 +12,14 @@
   gap: 8px;
 }
 
-h2 {
-  font-family: sans-serif;
-  font-size: 1.1rem;
+h3 {
   color: #172b4d;
-  margin-bottom: 12px;
+  font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  padding-left: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }

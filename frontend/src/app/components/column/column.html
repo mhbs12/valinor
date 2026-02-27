@@ -1,5 +1,5 @@
 <div>
-  <h2>{{ tituloDaColuna() }}</h2>
+  <h3>{{ tituloDaColuna() }}</h3>
 
   <div
     cdkDropList
@@ -9,7 +9,7 @@
     (cdkDropListDropped)="aoSoltar($event)"
   >
     @for (tarefa of listaDeTarefas(); track tarefa) {
-      <app-card [texto]="tarefa" cdkDrag></app-card>
+      <app-card [texto]="tarefa.texto" cdkDrag></app-card>
     }
   </div>
 </div>

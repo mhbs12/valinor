@@ -1,5 +1,4 @@
-<div class="quadro-kanban" cdkDropListGroup>
-  <div class="add">
+<div class="add">
     <input
       type="text"
       placeholder="Digite o nome da tarefa..."
@@ -9,6 +8,8 @@
     />
     <button (click)="adicionarTarefa()">Adicionar</button>
   </div>
+
+<div class="quadro-kanban" cdkDropListGroup>
   <app-column
     tituloDaColuna="A Fazer"
     [listaDeTarefas]="tarefasAFazer()"

@@ -2,27 +2,18 @@
   background: #2134544b;
   border: 2px dashed #172b4d !important;
   border-radius: 4px;
-  min-height: 40px;
+  height: auto;
   box-sizing: border-box;
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 10px !important;
+
 }
 
 .cdk-drag-placeholder > div {
   margin: 0 !important;
-  padding: 10px !important;
+  padding: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-}
-
-.lista-cards {
-  min-height: 400px;
-  min-width: 300px;
-  background-color: #ebecf0;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 }
 
 .cdk-drag-animating {

@@ -10,7 +10,7 @@ import { CdkDragDrop, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 })
 export class Column {
   tituloDaColuna = input<string>('');
-  listaDeTarefas = input<string[]>([]);
+  listaDeTarefas = input<any[]>([]);
 
   foiSolto = output<CdkDragDrop<string[]>>();
 
