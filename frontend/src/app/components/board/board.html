@@ -1,5 +1,30 @@
 <div class="quadro-kanban" cdkDropListGroup>
-    @for (coluna of colunas; track coluna){
-        <app-column [tituloDaColuna]="coluna.titulo" [listaDeTarefas]="coluna.tarefas"></app-column>
-    }
+  <div class="add">
+    <input
+      type="text"
+      placeholder="Digite o nome da tarefa..."
+      [ngModel]="textoDaNovaTarefa()"
+      (ngModelChange)="textoDaNovaTarefa.set($event)"
+      (keyup.enter)="adicionarTarefa()"
+    />
+    <button (click)="adicionarTarefa()">Adicionar</button>
+  </div>
+  <app-column
+    tituloDaColuna="A Fazer"
+    [listaDeTarefas]="tarefasAFazer()"
+    (foiSolto)="tarefaMovida($any($event))"
+  >
+  </app-column>
+  <app-column
+    tituloDaColuna="Em Pogresso"
+    [listaDeTarefas]="tarefasEmProgresso()"
+    (foiSolto)="tarefaMovida($any($event))"
+  >
+  </app-column>
+  <app-column
+    tituloDaColuna="Concluído"
+    [listaDeTarefas]="tarefasConcluidas()"
+    (foiSolto)="tarefaMovida($any($event))"
+  >
+  </app-column>
 </div>

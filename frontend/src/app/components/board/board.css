@@ -1,14 +1,38 @@
 .quadro-kanban {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 20px;          
   padding: 20px;
-  align-items: flex-start;
-  
-  /* ESTA É A LINHA QUE CENTRALIZA: */
-  justify-content: center; 
-  
-  /* Opcional: Garante que o quadro ocupe a largura toda para poder centralizar o conteúdo */
+  justify-content: center;
+  font-family: sans-serif;
+}
+
+.add {
   width: 100%;
-  min-height: 100vh;
-  box-sizing: border-box; /* Evita que o padding "estoure" a largura da tela */
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.add input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 300px;
+  outline: none;
+}
+
+.add button {
+  padding: 5px 15px;
+  background-color: #172b4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add button:hover {
+  background-color: #2d4369;
 }
