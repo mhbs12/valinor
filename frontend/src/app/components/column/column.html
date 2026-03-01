@@ -1,10 +1,68 @@
-<div>
-  <h3>{{ tituloDaColuna() }}</h3>
+<div class="column-wrapper">
+  <div class="column-header">
+    @if (isEditing()) {
+      <div class="edit-header">
+        <input 
+          [ngModel]="editName()"
+          (ngModelChange)="editName.set($event)"
+          (keyup.enter)="saveEditing()"
+          (keyup.escape)="cancelEditing()"
+        autoFocus
+        class="edit-input"
+        maxlength="50"
+      />
+        <button (click)="saveEditing()" class="save-btn">✓</button>
+        <button (click)="cancelEditing()" class="cancel-btn">×</button>
+      </div>
+    } @else {
+      <h3 (dblclick)="startEditing()" title="Clique duplo para editar">
+        {{ columnTitle() }}
+      </h3>
+      <div class="column-actions">
+        <button class="action-btn" (click)="startEditing()" title="Editar nome">✎</button>
+        <button class="action-btn delete-btn-header" (click)="deleteColumn()" title="Excluir coluna">×</button>
+      </div>
+    }
+  </div>
 
-  <div cdkDropList class="lista-cards" [id]="tituloDaColuna()" [cdkDropListData]="listaDeTarefas()"
-    (cdkDropListDropped)="aoSoltar($event)">
-    @for (tarefa of listaDeTarefas(); track tarefa) {
-    <app-card [texto]="tarefa.texto" cdkDrag></app-card>
+  <div class="add-task-container">
+    @if (isAddingTask()) {
+      <div class="add-task-form">
+        <textarea
+          placeholder="Digite o título da tarefa..."
+          [ngModel]="newTaskText()"
+          (ngModelChange)="newTaskText.set($event)"
+          (keyup.enter)="saveNewTask()"
+          (keyup.escape)="cancelTaskAddition()"
+          autoFocus
+          rows="3"
+        ></textarea>
+        <div class="add-task-actions">
+          <button class="btn-add-task" (click)="saveNewTask()">Adicionar</button>
+          <button class="btn-cancel-task" (click)="cancelTaskAddition()">×</button>
+        </div>
+      </div>
+    } @else {
+      <button class="btn-add-card" (click)="isAddingTask.set(true)">
+        + Adicionar um cartão
+      </button>
+    }
+  </div>
+
+  <div
+    cdkDropList
+    class="lista-cards"
+    [id]="id()"
+    [cdkDropListData]="taskList()"
+    (cdkDropListDropped)="handleDrop($event)"
+  >
+    @for (task of taskList(); track task.id) {
+      <app-card 
+        [text]="task.text" 
+        cdkDrag 
+        [cdkDragData]="task"
+        (onDelete)="deleteTask(task.id)">
+      </app-card>
     }
   </div>
 </div>

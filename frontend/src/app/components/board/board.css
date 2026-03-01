@@ -1,10 +1,17 @@
 .quadro-kanban {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;          
+  gap: 20px;
   padding: 20px;
   justify-content: center;
   font-family: sans-serif;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
 }
 
 .add {
@@ -12,7 +19,6 @@
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 20px;
 }
 
 .add input {
@@ -31,6 +37,118 @@
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
+}
+
+.board-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  padding: 20px;
+  min-height: calc(100vh - 200px);
+}
+
+.board-lane {
+  display: flex;
+  flex-direction: column;
+  width: 370px;
+  gap: 30px;
+}
+
+.add-column-container {
+  width: 100%;
+  background-color: transparent;
+  border-radius: 8px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-column-container.adding {
+  align-items: flex-start;
+  min-height: fit-content;
+  background-color: #ebecf0;
+}
+
+.btn-placeholder {
+  width: 100%;
+  height: 400px;
+  background: transparent;
+  border: 2px dashed rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.2);
+  font-family: sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-placeholder:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.plus-icon {
+  font-size: 64px;
+  font-weight: 300;
+}
+
+.add-column-form {
+  width: 100%;
+  background-color: #ebecf0;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-column-form input {
+  padding: 8px 12px;
+  border: 2px solid #172b4d;
+  border-radius: 3px;
+  outline: none;
+  font-family: sans-serif;
+}
+
+.add-column-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-add {
+  background-color: #172b4d;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-add:hover {
+  background-color: #091e42;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  color: #6b778c;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 20px;
+  padding: 4px;
+}
+
+.btn-close:hover {
+  color: #172b4d;
 }
 
 .add button:hover {

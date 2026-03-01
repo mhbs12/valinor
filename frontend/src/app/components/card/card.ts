@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-card',
@@ -7,5 +7,10 @@ import { Component, input } from '@angular/core';
   styleUrl: './card.css',
 })
 export class Card {
-  texto = input<string>('');
+  text = input<string>('');
+  onDelete = output<void>();
+
+  delete() {
+    this.onDelete.emit();
+  }
 }

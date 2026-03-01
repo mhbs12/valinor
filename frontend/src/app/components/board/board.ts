@@ -1,72 +1,159 @@
-import { Component, signal, input, inject } from '@angular/core';
-import { Column } from '../column/column';
-import { CdkDropListGroup } from '@angular/cdk/drag-drop';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { moveItemInArray, transferArrayItem, CdkDragDrop } from '@angular/cdk/drag-drop';
-import { TaskService, Task } from '../../services/task';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, DragDropModule } from '@angular/cdk/drag-drop';
+import { TaskService, Column, Task } from '../../services/task';
+import { Column as ColumnComponent } from '../column/column';
 
 @Component({
   selector: 'app-board',
-  imports: [Column, CdkDropListGroup, FormsModule],
+  standalone: true,
+  imports: [FormsModule, ColumnComponent, DragDropModule],
   templateUrl: './board.html',
   styleUrl: './board.css',
 })
-export class Board {
-  private taskService = inject(TaskService);
+export class Board implements OnInit {
+  columns = signal<Column[]>([]);
+  newColumnName = signal('');
+  isAddingColumn = signal(false);
 
-  tarefasAFazer = signal<Task[]>([]);
-  tarefasEmProgresso = signal<Task[]>([]);
-  tarefasConcluidas = signal<Task[]>([]);
-  textoDaNovaTarefa = signal('');
+  distributedColumns = computed(() => {
+    const lanes: Column[][] = [[], [], [], []];
+    this.columns().forEach((col, index) => {
+      lanes[index % 4].push(col);
+    });
+    return lanes;
+  });
 
-  //Busca no backend ao carregar a pagina.
+  addColumnButtonLane = computed(() => this.columns().length % 4);
+
+  constructor(private taskService: TaskService) {}
+
   ngOnInit() {
-    this.taskService.getTasks().subscribe((tasks) => {
-      this.tarefasAFazer.set(tasks.filter(t => t.coluna === 'A Fazer'));
-      this.tarefasEmProgresso.set(tasks.filter(t => t.coluna === 'Em Progresso'));
-      this.tarefasConcluidas.set(tasks.filter(t => t.coluna === 'Concluído'));
+    this.loadBoard();
+  }
+
+  loadBoard() {
+    this.taskService.getBoard().subscribe({
+      next: (data) => this.columns.set(data),
+      error: (err) => console.error('Error fetching board:', err),
     });
   }
 
-  //Adiciona o texto digitado na coluna 'A Fazer' e salva a info no backend
-  adicionarTarefa() {
-    const texto = this.textoDaNovaTarefa().trim();
-    if (texto) {
-      this.taskService.createTask(texto, 'A Fazer').subscribe((novaTarefa) => {
-        this.tarefasAFazer.update(lista => [...lista, novaTarefa]);
-        this.textoDaNovaTarefa.set('');
-      });
-    }
+  addColumn() {
+    const name = this.newColumnName().trim();
+    if (!name) return;
+
+    this.taskService.createColumn(name).subscribe({
+      next: (newColumn) => {
+        // Initializes the task array of the new column (in case it comes from backend without it)
+        const columnWithTasks = { ...newColumn, tasks: newColumn.tasks || [] };
+        this.columns.update(columns => [...columns, columnWithTasks]);
+        this.newColumnName.set('');
+        this.isAddingColumn.set(false);
+      },
+      error: (err) => console.error('Error creating column:', err)
+    });
   }
 
-  tarefaMovida(event: CdkDragDrop<Task[]>) {
-    //Reorganiza o array na mesma coluna
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      //Troca para o array correto em colunas diferentes
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+  cancelColumnAddition() {
+    this.newColumnName.set('');
+    this.isAddingColumn.set(false);
+  }
 
-      //Salva as posiçoes corretamente no backend
-      const tarefaMovida = event.container.data[event.currentIndex];
-      const novaColuna = event.container.id;
-      const novaOrdem = event.currentIndex;
-      this.taskService.updateTaskPosition(tarefaMovida.id, novaColuna, novaOrdem).subscribe();
+  deleteTask(taskId: string) {
+    if (!confirm('Are you sure you want to delete this task?')) return;
+
+    this.taskService.deleteTask(taskId).subscribe({
+      next: () => {
+        this.columns.update(columns => 
+          columns.map(col => ({
+            ...col,
+            tasks: col.tasks.filter(t => t.id !== taskId)
+          }))
+        );
+      },
+      error: (err) => console.error('Error deleting task:', err)
+    });
+  }
+
+  deleteColumn(columnId: string) {
+    if (!confirm('Are you sure you want to delete this column and all its tasks?')) return;
+
+    this.taskService.deleteColumn(columnId).subscribe({
+      next: () => {
+        this.columns.update(columns => columns.filter(col => col.id !== columnId));
+      },
+      error: (err) => console.error('Error deleting column:', err)
+    });
+  }
+
+  updateColumnName(columnId: string, newName: string) {
+    this.taskService.updateColumn(columnId, newName).subscribe({
+      next: (updatedColumn) => {
+        this.columns.update(columns => 
+          columns.map(col => col.id === columnId ? { ...col, name: updatedColumn.name } : col)
+        );
+      },
+      error: (err) => console.error('Error updating column name:', err)
+    });
+  }
+
+  addTask(columnId: string, text: string) {
+    this.taskService.createTask(text, columnId).subscribe({
+      next: (newTask) => {
+        this.columns.update(columns => 
+          columns.map(col => 
+            col.id === columnId 
+              ? { ...col, tasks: [...col.tasks, newTask] } 
+              : col
+          )
+        );
+      },
+      error: (err) => console.error('Error creating task:', err)
+    });
+  }
+
+  onTaskMoved(event: CdkDragDrop<Task[]>, columnId: string) {
+    if (event.previousContainer === event.container && event.previousIndex === event.currentIndex) {
+      return;
     }
 
-    //Atualizando o signal
-    this.tarefasAFazer.update((lista) => [...lista]);
-    this.tarefasEmProgresso.update((lista) => [...lista]);
-    this.tarefasConcluidas.update((lista) => [...lista]);
+    const movedTask = event.item.data;
 
-    //Debug
-    console.log(
-      `Movendo de: [${event.previousContainer.id}] (índice ${event.previousIndex}) ----> Para: [${event.container.id}] (índice ${event.currentIndex})`,
-    );
+    this.columns.update((columns) => {
+      const newColumns = columns.map((col) => ({
+        ...col,
+        tasks: [...col.tasks],
+      }));
+
+      const sourceColumn = newColumns.find((c) => c.id === event.previousContainer.id);
+      const targetColumn = newColumns.find((c) => c.id === event.container.id);
+
+      if (sourceColumn && targetColumn) {
+        if (sourceColumn === targetColumn) {
+          moveItemInArray(sourceColumn.tasks, event.previousIndex, event.currentIndex);
+        } else {
+          transferArrayItem(
+            sourceColumn.tasks,
+            targetColumn.tasks,
+            event.previousIndex,
+            event.currentIndex
+          );
+        }
+      }
+      return newColumns;
+    });
+
+    const targetColumnId = event.container.id;
+
+    this.taskService
+      .updateTaskPosition(movedTask.id, targetColumnId, event.currentIndex)
+      .subscribe({
+        next: () => console.log('Position saved to SQLite successfully!'),
+        error: (err) => {
+          console.error('Error saving to database, reloading board...', err);
+          this.loadBoard();
+        },
+      });
   }
 }
