@@ -1,28 +1,45 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
-  //Rota para criar uma nova tarefa
-  @Post()
-  create(@Body() body: { texto: string; coluna: 'A Fazer' | 'Em Progresso' | 'Concluído' }) {
-    return this.tasksService.create(body.texto, body.coluna);
-  }
-
-  //Rota para listar todas as tarefas
   @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  getBoard() {
+    return this.tasksService.getBoard();
   }
 
-  //Rota para quando mudar o card de coluna
+  @Post('column')
+  createColumn(@Body() body: { name: string }) {
+    return this.tasksService.createColumn(body.name);
+  }
+
+  @Patch('column/:id')
+  updateColumn(@Param('id') id: string, @Body() body: { name: string }) {
+    return this.tasksService.updateColumn(id, body.name);
+  }
+
+  @Delete('column/:id')
+  deleteColumn(@Param('id') id: string) {
+    return this.tasksService.deleteColumn(id);
+  }
+
+  @Post()
+  createTask(@Body() body: { text: string; columnId: string }) {
+    return this.tasksService.createTask(body.text, body.columnId);
+  }
+
   @Patch(':id/position')
   updatePosition(
     @Param('id') id: string,
-    @Body() body: { novaColuna: 'A Fazer' | 'Em Progresso' | 'Concluído'; novaOrdem: number }
+    @Body() body: { columnId: string; order: number }
   ) {
-    return this.tasksService.updatePosition(id, body.novaColuna, body.novaOrdem);
+    return this.tasksService.updateTaskPosition(id, body.columnId, body.order);
+  }
+
+  @Delete(':id')
+  deleteTask(@Param('id') id: string) {
+    return this.tasksService.deleteTask(id);
   }
 }
