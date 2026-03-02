@@ -1,6 +1,9 @@
 <div class="column-wrapper">
+  
+  <!-- Cabeçalho da Coluna -->
   <div class="column-header">
     @if (isEditing()) {
+      <!-- Modo de Edição -->
       <div class="edit-header">
         <input 
           [ngModel]="editName()"
@@ -25,6 +28,7 @@
     }
   </div>
 
+  <!-- Área de Adicionar Tarefa -->
   <div class="add-task-container">
     @if (isAddingTask()) {
       <div class="add-task-form">
@@ -49,6 +53,7 @@
     }
   </div>
 
+  <!-- Lista de Tarefas: Área onde os cards são soltos (DropList) -->
   <div
     cdkDropList
     class="lista-cards"

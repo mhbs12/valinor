@@ -10,11 +10,14 @@ import { Task } from '../../services/task';
   templateUrl: './column.html',
   styleUrl: './column.css',
 })
+
 export class Column {
+  //Dados que vêm do componente pai (Board)
   id = input<string>('');
   columnTitle = input<string>('');
   taskList = input<Task[]>([]);
 
+  //Eventos que avisam o pai (Board) sobre ações do usuário
   onDrop = output<CdkDragDrop<Task[]>>();
   onDeleteTask = output<string>();
   onDeleteColumn = output<void>();
@@ -43,6 +46,7 @@ export class Column {
     this.isEditing.set(false);
   }
 
+  //Emite evento para criar tarefa e limpa o formulário
   saveNewTask() {
     const text = this.newTaskText().trim();
     if (text) {
@@ -57,14 +61,17 @@ export class Column {
     this.isAddingTask.set(false);
   }
 
+  //Repassa o evento de drag-and-drop do Angular CDK para o pai
   handleDrop(event: CdkDragDrop<Task[]>) {
     this.onDrop.emit(event);
   }
 
+  //Repassa o pedido de exclusão da tarefa para o pai
   deleteTask(taskId: string) {
     this.onDeleteTask.emit(taskId);
   }
 
+  //Repassa o pedido de exclusão da coluna para o pai
   deleteColumn() {
     this.onDeleteColumn.emit();
   }

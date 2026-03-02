@@ -17,6 +17,8 @@ export class Board implements OnInit {
   isAddingColumn = signal(false);
 
   distributedColumns = computed(() => {
+
+    //Distribui as colunas em 4 faixas seguindo a logica masonry
     const lanes: Column[][] = [[], [], [], []];
     this.columns().forEach((col, index) => {
       lanes[index % 4].push(col);
@@ -24,6 +26,7 @@ export class Board implements OnInit {
     return lanes;
   });
 
+  //Determina em qual faixa adicionar a nova coluna baseado na quantidade de colunas existentes
   addColumnButtonLane = computed(() => this.columns().length % 4);
 
   constructor(private taskService: TaskService) {}
@@ -45,13 +48,28 @@ export class Board implements OnInit {
 
     this.taskService.createColumn(name).subscribe({
       next: (newColumn) => {
-        // Initializes the task array of the new column (in case it comes from backend without it)
+        //Adiciona a nova coluna ao array de colunas e cria um array vazio para as tarefas se já nao houver um.
         const columnWithTasks = { ...newColumn, tasks: newColumn.tasks || [] };
         this.columns.update(columns => [...columns, columnWithTasks]);
         this.newColumnName.set('');
         this.isAddingColumn.set(false);
       },
       error: (err) => console.error('Error creating column:', err)
+    });
+  }
+
+  addTask(columnId: string, text: string) {
+    this.taskService.createTask(text, columnId).subscribe({
+      next: (newTask) => {
+        this.columns.update(columns => 
+          columns.map(col => 
+            col.id === columnId 
+              ? { ...col, tasks: [...col.tasks, newTask] } 
+              : col
+          )
+        );
+      },
+      error: (err) => console.error('Error creating task:', err)
     });
   }
 
@@ -98,21 +116,7 @@ export class Board implements OnInit {
     });
   }
 
-  addTask(columnId: string, text: string) {
-    this.taskService.createTask(text, columnId).subscribe({
-      next: (newTask) => {
-        this.columns.update(columns => 
-          columns.map(col => 
-            col.id === columnId 
-              ? { ...col, tasks: [...col.tasks, newTask] } 
-              : col
-          )
-        );
-      },
-      error: (err) => console.error('Error creating task:', err)
-    });
-  }
-
+  //Atualiza a ordem das tarefas quando elas são movidas entre colunas
   onTaskMoved(event: CdkDragDrop<Task[]>, columnId: string) {
     if (event.previousContainer === event.container && event.previousIndex === event.currentIndex) {
       return;
@@ -129,10 +133,11 @@ export class Board implements OnInit {
       const sourceColumn = newColumns.find((c) => c.id === event.previousContainer.id);
       const targetColumn = newColumns.find((c) => c.id === event.container.id);
 
-      if (sourceColumn && targetColumn) {
-        if (sourceColumn === targetColumn) {
+      
+      if (sourceColumn && targetColumn) {//Verifica se as colunas de origem e destino existem
+        if (sourceColumn === targetColumn) {//Se for na mesma coluna
           moveItemInArray(sourceColumn.tasks, event.previousIndex, event.currentIndex);
-        } else {
+        } else {//Se for em colunas diferentes
           transferArrayItem(
             sourceColumn.tasks,
             targetColumn.tasks,
@@ -143,10 +148,10 @@ export class Board implements OnInit {
       }
       return newColumns;
     });
-
+    
     const targetColumnId = event.container.id;
 
-    this.taskService
+    this.taskService//Atualiza a posição da tarefa no backend
       .updateTaskPosition(movedTask.id, targetColumnId, event.currentIndex)
       .subscribe({
         next: () => console.log('Position saved to SQLite successfully!'),

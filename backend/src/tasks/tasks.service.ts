@@ -5,6 +5,7 @@ import { PrismaService } from './prisma.service';
 export class TasksService {
   constructor(private prisma: PrismaService) {}
 
+  //Busca colunas e tarefas
   async getBoard() {
     return this.prisma.column.findMany({
       include: {
@@ -14,6 +15,7 @@ export class TasksService {
     });
   }
 
+  //Cria tarefa e calcula a ordem no final da lista
   async createTask(text: string, columnId: string) {
     const lastTask = await this.prisma.task.findFirst({
       where: { columnId },
@@ -31,6 +33,7 @@ export class TasksService {
     });
   }
 
+  //Atualiza posições e reordena vizinhos
   async updateTaskPosition(id: string, newColumnId: string, newOrder: number) {
     const task = await this.prisma.task.findUnique({ where: { id } });
     if (!task) throw new Error('Tarefa não encontrada');
@@ -38,11 +41,14 @@ export class TasksService {
     const oldColumnId = task.columnId;
     const oldOrder = task.order;
 
+    //Usa transação para garantir que todas as atualizações ocorram ou nenhuma ocorra
     return this.prisma.$transaction(async (tx) => {
+      //Movendo dentro da mesma coluna
       if (oldColumnId === newColumnId) {
         if (oldOrder === newOrder) return task;
 
         if (oldOrder < newOrder) {
+          //Movendo para baixo, decrementa ordem de quem está no meio
           await tx.task.updateMany({
             where: {
               columnId: oldColumnId,
@@ -51,6 +57,7 @@ export class TasksService {
             data: { order: { decrement: 1 } },
           });
         } else {
+          //Movendo para cima, incrementa ordem de quem está no meio
           await tx.task.updateMany({
             where: {
               columnId: oldColumnId,
@@ -60,6 +67,9 @@ export class TasksService {
           });
         }
       } else {
+        //Movendo para outra coluna
+        
+        //Remove da coluna antiga
         await tx.task.updateMany({
           where: {
             columnId: oldColumnId,
@@ -68,6 +78,7 @@ export class TasksService {
           data: { order: { decrement: 1 } },
         });
 
+        //Abre espaço na nova coluna
         await tx.task.updateMany({
           where: {
             columnId: newColumnId,
@@ -77,6 +88,7 @@ export class TasksService {
         });
       }
 
+      //Move a tarefa para a nova posição
       return tx.task.update({
         where: { id },
         data: { columnId: newColumnId, order: newOrder },
@@ -90,6 +102,7 @@ export class TasksService {
     });
   }
 
+  //Cria coluna sempre no final da lista horizontal
   async createColumn(name: string) {
     const lastCol = await this.prisma.column.findFirst({
       orderBy: { order: 'desc' },

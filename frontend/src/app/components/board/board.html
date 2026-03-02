@@ -1,4 +1,7 @@
+<!-- Container principal que agrupa todas as listas para Drag & Drop -->
 <div class="board-wrapper" cdkDropListGroup>
+  
+  <!-- Loop principal: Percorre as 4 faixas (lanes) calculadas pelo Masonry -->
   @for (lane of distributedColumns(); track $index; let i = $index) {
     <div class="board-lane">
       @for (column of lane; track column.id) {
@@ -17,6 +20,7 @@
       @if (i === addColumnButtonLane()) {
         <div class="add-column-container" [class.adding]="isAddingColumn()">
           @if (isAddingColumn()) {
+            <!-- Formulário para criar nova coluna -->
             <div class="add-column-form">
               <input
                 type="text"
@@ -33,6 +37,7 @@
               </div>
             </div>
           } @else {
+            <!-- Botão "+" para iniciar a criação -->
             <button class="btn-placeholder" (click)="isAddingColumn.set(true)">
               <span class="plus-icon">+</span>
             </button>
