@@ -16,6 +16,9 @@ cd backend
 # Instalar dependências
 npm install
 
+# Crie um arquivo .env na pasta backend com o seguinte conteúdo:
+# DATABASE_URL="file:./dev.db"
+
 # Configurar o banco de dados (SQLite)
 npx prisma migrate dev --name init
 
