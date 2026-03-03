@@ -24,6 +24,16 @@ npm run start:dev
 ```
 O servidor rodará em: `http://localhost:3000`
 
+### 🗄️ Visualizar Banco de Dados (Opcional)
+
+Se quiser inspecionar as tabelas e dados visualmente, você pode usar o **Prisma Studio**.
+Abra um novo terminal na pasta `backend` e execute:
+
+```bash
+npx prisma studio
+```
+Acesse em: `http://localhost:5555`
+
 ### 🧪 Rodando os Testes
 
 Para garantir a qualidade do código, foram implementados testes unitários tanto no backend quanto no frontend.
