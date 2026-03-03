@@ -75,10 +75,10 @@
   width: 100%;
   height: 400px;
   background: transparent;
-  border: 2px dashed rgba(0, 0, 0, 0.1);
+  border: 2px dashed rgba(23, 43, 77, 0.3); /* Mais escuro e azulado */
   border-radius: 8px;
   padding: 0;
-  color: rgba(0, 0, 0, 0.2);
+  color: rgba(23, 43, 77, 0.4); /* Ícone mais visível */
   font-family: sans-serif;
   font-weight: 500;
   cursor: pointer;
@@ -89,9 +89,9 @@
 }
 
 .btn-placeholder:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-  border-color: rgba(0, 0, 0, 0.2);
-  color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(23, 43, 77, 0.05);
+  border-color: rgba(23, 43, 77, 0.6); /* Borda bem definida no hover */
+  color: #172b4d; /* Ícone sólido no hover */
 }
 
 .plus-icon {
